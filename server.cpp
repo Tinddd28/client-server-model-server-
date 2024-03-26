@@ -26,74 +26,57 @@ void Server::incomingConnection(qintptr socketDescriptor)
 
 void Server::slotReadyRead()
 {
-    socket = (QTcpSocket*)sender();
-    QDataStream in(socket);
-    in.setVersion(QDataStream::Qt_5_14);
-    if (in.status() == QDataStream::Ok)
+    QByteArray responseData = socket->readAll();
+    QList<QByteArray> responses = responseData.split('#');
+
+    for (const QByteArray& response : responses)
     {
-        qDebug() << "read...";
-        for (;;)
+        if (response.isEmpty()) continue;
+
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+        QJsonObject jsonObj = jsonDoc.object();
+
+
+        QString window = jsonObj.value("window").toString();
+        if (window == "mainwindow")
         {
-            if (nextBlockSize == 0)
+            QString action = jsonObj.value("action").toString();
+            if (action == "login")
             {
-                if (socket->bytesAvailable() < 2) break;
-                in >> nextBlockSize;
+                QJsonObject data = jsonObj.value("data").toObject();
+                QString us_name = data.value("us_name").toString();
+                QString us_pass = data.value("us_pass").toString();
+                select_role(us_name, us_pass);
             }
-            if (socket->bytesAvailable() < nextBlockSize) break;
-
-            int flagOfData;
-            in >> flagOfData;
-            if (flagOfData == 1) //login
-            {
-                QString us_name;
-                QByteArray us_pass;
-                in >> us_name >> us_pass;
-                QString res_auth = db.get_data_for_auth(us_name, us_pass);
-
-                qDebug() << res_auth;
-                if (res_auth == "director")
-                    SendToClient("director");
-                if (res_auth == "salesmanager")
-                    SendToClient("salesmanager");
-                if (res_auth == "marketingmanager")
-                    SendToClient("marketingmanager");
-
-            }
-            else if (flagOfData == 2) //data
-            {
-                QJsonDocument jsonData = QJsonDocument(db.get_data_of_items());
-                QString jsonString = jsonData.toJson();
-                SendItemsForClient(jsonString);
-                //qDebug() << jsonString;
-            }
-            nextBlockSize = 0;
-
-            break;
         }
     }
-    else qDebug() << "DataStream error";
+
+}
+
+void Server::select_role(QString us_name, QString us_pass)
+{
+
+    QString res = db.get_data_for_auth(us_name, us_pass);
+    QString status = "success";
+    if (res == "director")
+        id_p = 1;
+    else if (res == "salesmanager") id_p = 2;
+    else if (res == "marketingmanager") id_p = 3;
+    else if (res == "No") status = "fail";
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "mainwindow");
+    jsonObj.insert("action", "login");
+    jsonObj.insert("status", status);
+    jsonObj.insert("id", id_p);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
 }
 
 void Server::SendToClient(QString str) // for authorization
 {
-    Data.clear();
-    QDataStream out(&Data, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_14);
-    out << quint16(0) << 1 << str;
-    out.device()->seek(0);
-    out << quint16(Data.size() - sizeof(quint16));
-    socket->write(Data);
+
 
 }
 
-void Server::SendItemsForClient(QString str) // for send items
-{
-    Data.clear();
-    QDataStream out(&Data, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_14);
-    out << quint16(0) << 2 << str;
-    out.device()->seek(0);
-    out << quint16(Data.size() - sizeof(quint16));
-    socket->write(Data);
 
-}

@@ -27,9 +27,10 @@ private:
     QVector<QTcpSocket*> Sockets;
 
     db_connection db;
+    int id_p = 1;
     void SendItemsForClient(QString str);
-    //QString db_auth(QString uname, QByteArray pass);
 
+    void select_role(QString us_name, QString us_pass);
 
 
 public slots:

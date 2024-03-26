@@ -10,7 +10,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include <db_connection.h>
 
 class db_connection
 {
@@ -25,7 +24,7 @@ public:
     db_connection();
     QSqlDatabase db;
     bool db_open();
-    QString get_data_for_auth(QString uname, QByteArray pass);
+    QString get_data_for_auth(QString uname, QString pass);
     QJsonArray get_data_of_items();
     // void get_data_of_clients();
     // void add_client(QString name, QString mail, QString number);

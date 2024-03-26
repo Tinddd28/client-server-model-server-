@@ -14,7 +14,7 @@ bool db_connection::db_open()
     return db.open();
 }
 
-QString db_connection::get_data_for_auth(QString uname, QByteArray pass)
+QString db_connection::get_data_for_auth(QString uname, QString pass)
 {
     QSqlQuery query;
     if (!query.exec("SELECT username, password_hash FROM users"))
