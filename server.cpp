@@ -19,7 +19,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
     socket = new QTcpSocket;
     socket->setSocketDescriptor(socketDescriptor);
     connect(socket, &QTcpSocket::readyRead, this, &Server::slotReadyRead);
-    connect(socket, &QTcpSocket::disconnected, socket, &Server::deleteLater);
+    //connect(socket, &QTcpSocket::disconnected, socket, &Server::deleteLater);
 
     qDebug() << "connect user " << socketDescriptor;
 }
@@ -49,13 +49,24 @@ void Server::slotReadyRead()
                 select_role(us_name, us_pass);
             }
         }
+        else if (window == "salesmanager")
+        {
+            QString action = jsonObj.value("action").toString();
+            if (action == "data")
+            {
+                QString data = jsonObj.value("data").toString();
+                if (data == "items")
+                {
+                    SendItemsForClient();
+                }
+            }
+        }
     }
 
 }
 
 void Server::select_role(QString us_name, QString us_pass)
 {
-
     QString res = db.get_data_for_auth(us_name, us_pass);
     QString status = "success";
     if (res == "director")
@@ -73,10 +84,22 @@ void Server::select_role(QString us_name, QString us_pass)
     socket->write(jsonDoc.toJson());
 }
 
-void Server::SendToClient(QString str) // for authorization
+void Server::SendItemsForClient()
 {
+    QJsonDocument jsonData = QJsonDocument(db.get_data_of_items());
+    QString jsonString = jsonData.toJson();
+
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "salesmanager");
+    jsonObj.insert("action", "data");
+    jsonObj.insert("data", "items");
+    jsonObj.insert("items", jsonString);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
 
 
 }
+
 
 
