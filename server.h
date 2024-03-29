@@ -21,13 +21,11 @@ public:
 
 private:
     QVector<QTcpSocket*> sockets;
-    QByteArray Data;
-    quint16 nextBlockSize;
-    QVector<QTcpSocket*> Sockets;
 
     db_connection db;
     int id_p = 1;
     void SendItemsForClient();
+    void SendListOfClients();
 
     void select_role(QString us_name, QString us_pass);
 

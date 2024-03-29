@@ -6,7 +6,6 @@ Server::Server()
         qDebug() << "start";
     else
         qDebug() << "error";
-    nextBlockSize = 0;
     if (db.db_open())
     {
         qDebug() << "connect to db";
@@ -59,6 +58,10 @@ void Server::slotReadyRead()
                 {
                     SendItemsForClient();
                 }
+                else if (data == "clients")
+                {
+                    SendListOfClients();
+                }
             }
         }
     }
@@ -97,9 +100,20 @@ void Server::SendItemsForClient()
 
     QJsonDocument jsonDoc(jsonObj);
     socket->write(jsonDoc.toJson());
-
-
 }
 
+void Server::SendListOfClients()
+{
+    QJsonDocument jsonData = QJsonDocument(db.get_data_of_clients());
+    QString jsonString = jsonData.toJson();
 
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "salesmanager");
+    jsonObj.insert("action", "data");
+    jsonObj.insert("data", "clients");
+    jsonObj.insert("clients", jsonString);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
 

@@ -58,3 +58,40 @@ QJsonArray db_connection::get_data_of_items()
     return jsonArray;
 }
 
+QJsonArray db_connection::get_data_of_clients()
+{
+    if (!db.tables().contains("clients"))
+    {
+        QSqlQuery query;
+        if (!query.exec("CREATE TABLE clients"
+                        "(id SERIAL PRIMARY KEY,"
+                        "name VARCHAR(50),"
+                        "surname VARCHAR(50),"
+                        "mail VARCHAR(50),"
+                        "phone VARCHAR(11));")) {
+            qDebug() << "Ошибка при создании таблицы:" << query.lastError().text();
+            return QJsonArray();
+        }
+        qDebug() << "Таблица 'clients' успешно создана";
+    }
+
+    QSqlQuery query;
+    if (!query.exec("SELECT * FROM clients;"))
+    {
+        qDebug() << "Ошибка!";
+        return QJsonArray();
+    }
+
+    QJsonArray jsonArray;
+    while (query.next())
+    {
+        QJsonObject jsonObj;
+        jsonObj["name"] = query.value(1).toString();
+        jsonObj["surname"] = query.value(2).toString();
+        jsonObj["mail"] = query.value(3).toString();
+        jsonObj["phone"] = query.value(4).toString();
+        jsonArray.append(jsonObj);
+    }
+    return jsonArray;
+}
+
