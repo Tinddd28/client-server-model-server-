@@ -26,6 +26,7 @@ private:
     int id_p = 1;
     void SendItemsForClient();
     void SendListOfClients();
+    void SendInfoAboutOrder();
 
     void select_role(QString us_name, QString us_pass);
 

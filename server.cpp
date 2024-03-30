@@ -62,6 +62,10 @@ void Server::slotReadyRead()
                 {
                     SendListOfClients();
                 }
+                else if (data == "order")
+                {
+                    SendInfoAboutOrder();
+                }
             }
         }
     }
@@ -112,6 +116,26 @@ void Server::SendListOfClients()
     jsonObj.insert("action", "data");
     jsonObj.insert("data", "clients");
     jsonObj.insert("clients", jsonString);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
+
+void Server::SendInfoAboutOrder()
+{
+    QJsonDocument jsonData = QJsonDocument(db.get_data_of_items());
+    QString jsonItems = jsonData.toJson();
+    jsonData = QJsonDocument(db.get_data_of_clients());
+    QString jsonClients = jsonData.toJson();
+
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "salesmanager");
+    jsonObj.insert("action", "data");
+    jsonObj.insert("data", "order");
+    QJsonObject jsonD;
+    jsonD.insert("order_items", jsonItems);
+    jsonD.insert("order_clients", jsonClients);
+    jsonObj.insert("order", jsonD);
 
     QJsonDocument jsonDoc(jsonObj);
     socket->write(jsonDoc.toJson());

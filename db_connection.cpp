@@ -36,6 +36,21 @@ QString db_connection::get_data_for_auth(QString uname, QString pass)
 
 QJsonArray db_connection::get_data_of_items()
 {
+    if (!db.tables().contains("items"))
+    {
+        QSqlQuery query;
+        if (!query.exec("CREATE TABLE items"
+                        "(id SERIAL PRIMARY KEY,"
+                        "item_name VARCHAR(50) NOT NULL,"
+                        "price float NOT NULL,"
+                        "type VARCHAR(50) ,"
+                        "amount int);")) {
+            qDebug() << "Ошибка при создании таблицы:" << query.lastError().text();
+            return QJsonArray();
+        }
+        qDebug() << "Таблица 'clients' успешно создана";
+    }
+
     QSqlQuery query;
     QString queryStr = QString("SELECT * FROM items");
     if (!query.exec(queryStr))
