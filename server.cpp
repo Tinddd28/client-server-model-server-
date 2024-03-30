@@ -20,7 +20,6 @@ void Server::incomingConnection(qintptr socketDescriptor)
     connect(socket, &QTcpSocket::readyRead, this, &Server::slotReadyRead);
     //connect(socket, &QTcpSocket::disconnected, socket, &Server::deleteLater);
 
-    qDebug() << "connect user " << socketDescriptor;
 }
 
 void Server::slotReadyRead()
@@ -65,6 +64,14 @@ void Server::slotReadyRead()
                 else if (data == "order")
                 {
                     SendInfoAboutOrder();
+                }
+                else if (data == "changes")
+                {
+                    QJsonObject changes = jsonObj.value("changes").toObject();
+                    QString items = changes.value("items").toString();
+                    QString clients = changes.value("clients").toString();
+                    qDebug() << items;
+                    qDebug() << clients;
                 }
             }
         }
