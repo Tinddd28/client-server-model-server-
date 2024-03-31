@@ -68,10 +68,14 @@ void Server::slotReadyRead()
                 else if (data == "changes")
                 {
                     QJsonObject changes = jsonObj.value("changes").toObject();
-                    QString items = changes.value("items").toString();
-                    QString clients = changes.value("clients").toString();
-                    qDebug() << items;
-                    qDebug() << clients;
+                    QString itemsString = changes["items"].toString();
+                    QString clientsString = changes["clients"].toString();
+
+                    // Преобразуем строки JSON обратно в JSON-документы
+                    QJsonDocument itemsDoc = QJsonDocument::fromJson(itemsString.toUtf8());
+                    QJsonDocument clientsDoc = QJsonDocument::fromJson(clientsString.toUtf8());
+                    qDebug() << itemsDoc;
+                    qDebug() << clientsDoc;
                 }
             }
         }
