@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDate>
 
 
 class db_connection
@@ -24,6 +25,8 @@ public:
     db_connection();
     QSqlDatabase db;
     bool db_open();
+    void db_close();
+    void editDbOfOrder(double pr, QString, QString, QString);
     QString get_data_for_auth(QString uname, QString pass);
     QJsonArray get_data_of_items();
     QJsonArray get_data_of_clients();

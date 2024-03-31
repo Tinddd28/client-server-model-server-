@@ -70,13 +70,17 @@ void Server::slotReadyRead()
                     QJsonObject changes = jsonObj.value("changes").toObject();
                     QString itemsString = changes["items"].toString();
                     QString clientsString = changes["clients"].toString();
-
+                    double price = changes["price"].toDouble();
+                    QString name = changes["name"].toString();
+                    QString surname = changes["surname"].toString();
+                    QString item = changes["item"].toString();
                     if (db.ChangeInDb(itemsString, 1))
                         qDebug() << "success";
-                    else qDebug() << "unsuccess!";
+                    else return;
 
                     if (db.ChangeInDb(clientsString, 2)) qDebug() << "success";
-                    else qDebug() << "unsuccess";
+                    else return;
+                    db.editDbOfOrder(price, name, surname, item);
                 }
             }
         }

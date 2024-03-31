@@ -14,6 +14,11 @@ bool db_connection::db_open()
     return db.open();
 }
 
+void db_connection::db_close()
+{
+    db.close();
+}
+
 QString db_connection::get_data_for_auth(QString uname, QString pass)
 {
     QSqlQuery query;
@@ -110,9 +115,45 @@ QJsonArray db_connection::get_data_of_clients()
     return jsonArray;
 }
 
+void db_connection::editDbOfOrder(double price, QString name, QString surname, QString item)
+{
+    QSqlQuery query;
+    if (!db.tables().contains("orders"))
+    {
+        QString queryStr = QString("CREATE TABLE orders"
+                                   "(id serial primary key,"
+                                   "item_name varchar(50),"
+                                   "person_name varchar(30),"
+                                   "person_surname varchar(30),"
+                                   "price float,"
+                                   "date_order Date);");
+        if (!query.exec(queryStr))
+        {
+            qDebug() << "unlucky";
+            return;
+        }
+    }
+
+    QString queryStr = QString("INSERT INTO orders (item_name, person_name, person_surname, price, date_order) VALUES "
+                               "('%1', '%2', '%3', %4, '%5')")
+                           .arg(item)
+                           .arg(name)
+                           .arg(surname)
+                           .arg(price)  // price уже является числом, поэтому его можно передать напрямую
+                           .arg(QDate::currentDate().toString(Qt::ISODate));
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "error!";
+        return;
+    }
+
+    qDebug() << "successfull add";
+}
+
 bool db_connection::ChangeInDb(QString jsonString, int flag)
 {
     QJsonParseError error;
+    QSqlQuery query;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
     if (error.error != QJsonParseError::NoError) {
         qDebug() << "Ошибка при парсинге JSON:" << error.errorString();
@@ -124,31 +165,41 @@ bool db_connection::ChangeInDb(QString jsonString, int flag)
     else
     {   if (db.open())
         {
-            qDebug() << "all ok!";
             if (flag == 1) // json of items;
             {
+                if (!query.exec("DELETE FROM items;"))
+                {
+                    qDebug() << "Failed to clear table:";
+                    qDebug() << query.lastError().text();
+                    return 0;
+                }
                 QJsonArray jsonArray = jsonDoc.array();
-
                 for (const auto& jsonValue : jsonArray)
                 {
                     QJsonObject jsonObj = jsonValue.toObject();
-                    QString itemName = jsonObj["item_name"].toString();
-                    float price = jsonObj["price"].toDouble();
+                    QString item_name = jsonObj["item_name"].toString();
+                    double price = jsonObj["price"].toDouble();
                     QString type = jsonObj["type"].toString();
                     int amount = jsonObj["amount"].toInt();
-                    QString queryStr = QString("UPDATE items SET amount = '%1', price = '%2' WHERE item_name = '%3'")
-                                           .arg(amount).arg(price).arg(itemName);
-
-                    if (!query.exec(queryStr)) {
-                        qDebug() << "Error executing SQL query:" << query.lastError().text();
+                    QString queryS = QString("INSERT INTO items (item_name, price, type, amount) VALUES ('" + item_name + "', '" + QString::number(price) + "', '" + type + "', '"
+                                             + QString::number(amount) + "');");
+                    if (!query.exec(queryS))
+                    {
+                        qDebug() << "ai-ai-ai" << query.lastError().text();
                         return 0;
                     }
+
                 }
             }
             else // json of clients
             {
+                if (!query.exec("DELETE FROM clients;"))
+                {
+                    qDebug() << "Failed to clear table:";
+                    qDebug() << query.lastError().text();
+                    return 0;
+                }
                 QJsonArray jsonArray = jsonDoc.array();
-
                 for (const auto& jsonValue : jsonArray)
                 {
                     QJsonObject jsonObj = jsonValue.toObject();
@@ -156,11 +207,11 @@ bool db_connection::ChangeInDb(QString jsonString, int flag)
                     QString surname = jsonObj["surname"].toString();
                     QString mail = jsonObj["mail"].toString();
                     QString phone = jsonObj["phone"].toString();
-                    QString queryStr = QString("UPDATE clients SET mail = '%1', phone = '%2' WHERE name = '%3' AND surname = '%4'")
-                                           .arg(mail).arg(phone).arg(name).arg(surname);
-
-                    if (!query.exec(queryStr)) {
-                        qDebug() << "Error executing SQL query:" << query.lastError().text();
+                    QString queryS = QString("INSERT INTO clients (name, surname, mail, phone) VALUES ('" + name + "', '" + surname+ "', '" + mail + "', '"
+                                             + phone + "');");
+                    if (!query.exec(queryS))
+                    {
+                        qDebug() << "ai-ai-ai" << query.lastError().text();
                         return 0;
                     }
                 }
