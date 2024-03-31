@@ -71,11 +71,12 @@ void Server::slotReadyRead()
                     QString itemsString = changes["items"].toString();
                     QString clientsString = changes["clients"].toString();
 
-                    // Преобразуем строки JSON обратно в JSON-документы
-                    QJsonDocument itemsDoc = QJsonDocument::fromJson(itemsString.toUtf8());
-                    QJsonDocument clientsDoc = QJsonDocument::fromJson(clientsString.toUtf8());
-                    qDebug() << itemsDoc;
-                    qDebug() << clientsDoc;
+                    if (db.ChangeInDb(itemsString, 1))
+                        qDebug() << "success";
+                    else qDebug() << "unsuccess!";
+
+                    if (db.ChangeInDb(clientsString, 2)) qDebug() << "success";
+                    else qDebug() << "unsuccess";
                 }
             }
         }

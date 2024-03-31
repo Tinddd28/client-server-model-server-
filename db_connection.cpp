@@ -110,3 +110,72 @@ QJsonArray db_connection::get_data_of_clients()
     return jsonArray;
 }
 
+bool db_connection::ChangeInDb(QString jsonString, int flag)
+{
+    QJsonParseError error;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonString.toUtf8(), &error);
+    if (error.error != QJsonParseError::NoError) {
+        qDebug() << "Ошибка при парсинге JSON:" << error.errorString();
+        return 0;
+    }
+    if (jsonDoc.array().isEmpty() || jsonDoc.isEmpty()) {
+        return 0;
+    }
+    else
+    {   if (db.open())
+        {
+            qDebug() << "all ok!";
+            if (flag == 1) // json of items;
+            {
+                QJsonArray jsonArray = jsonDoc.array();
+
+                for (const auto& jsonValue : jsonArray)
+                {
+                    QJsonObject jsonObj = jsonValue.toObject();
+                    QString itemName = jsonObj["item_name"].toString();
+                    float price = jsonObj["price"].toDouble();
+                    QString type = jsonObj["type"].toString();
+                    int amount = jsonObj["amount"].toInt();
+                    QString queryStr = QString("UPDATE items SET amount = '%1', price = '%2' WHERE item_name = '%3'")
+                                           .arg(amount).arg(price).arg(itemName);
+
+                    if (!query.exec(queryStr)) {
+                        qDebug() << "Error executing SQL query:" << query.lastError().text();
+                        return 0;
+                    }
+                }
+            }
+            else // json of clients
+            {
+                QJsonArray jsonArray = jsonDoc.array();
+
+                for (const auto& jsonValue : jsonArray)
+                {
+                    QJsonObject jsonObj = jsonValue.toObject();
+                    QString name = jsonObj["name"].toString();
+                    QString surname = jsonObj["surname"].toString();
+                    QString mail = jsonObj["mail"].toString();
+                    QString phone = jsonObj["phone"].toString();
+                    QString queryStr = QString("UPDATE clients SET mail = '%1', phone = '%2' WHERE name = '%3' AND surname = '%4'")
+                                           .arg(mail).arg(phone).arg(name).arg(surname);
+
+                    if (!query.exec(queryStr)) {
+                        qDebug() << "Error executing SQL query:" << query.lastError().text();
+                        return 0;
+                    }
+                }
+            }
+
+            return 1;
+        }
+        else
+        {
+            qDebug() << "db not open!";
+            return 0;
+        }
+    }
+}
+
+
+
+

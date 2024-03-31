@@ -28,6 +28,7 @@ public:
     QJsonArray get_data_of_items();
     QJsonArray get_data_of_clients();
     // void add_client(QString name, QString mail, QString number);
+    bool ChangeInDb(QString, int);
 
 
 
