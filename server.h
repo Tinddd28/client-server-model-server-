@@ -27,6 +27,8 @@ private:
     void SendItemsForClient();
     void SendListOfClients();
     void SendInfoAboutOrder();
+    void SendItemsForSale();
+    void SendItemsAndClients();
 
     void select_role(QString us_name, QString us_pass);
 

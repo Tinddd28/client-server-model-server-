@@ -84,8 +84,33 @@ void Server::slotReadyRead()
                 }
             }
         }
-    }
+        else if ("window" == "markmanager")
+        {
+            QString action = jsonObj.value("action").toString();
+            if (action == "set_sale")
+            {
+                QString items = jsonObj.value("items").toString();
+                SendItemsForSale();
+            }
+            else if (action == "message")
+            {
 
+            }
+        }
+    }
+}
+
+void Server::SendItemsForSale()
+{
+    QJsonDocument jsonData = QJsonDocument(db.get_data_of_items());
+    QString res = jsonData.toJson();
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "markmanager");
+    jsonObj.insert("action", "set_sale");
+    jsonObj.insert("items", res);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
 }
 
 void Server::select_role(QString us_name, QString us_pass)
