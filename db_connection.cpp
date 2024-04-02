@@ -72,10 +72,53 @@ QJsonArray db_connection::get_data_of_items()
         jsonObject["price"] = query.value(2).toDouble();
         jsonObject["type"] = query.value(3).toString();
         jsonObject["amount"] = query.value(4).toInt();
-        jsonArray.append(jsonObject);
+        if (jsonObject["amount"].toInt() > 0)
+            jsonArray.append(jsonObject);
     }
 
     return jsonArray;
+}
+
+bool db_connection::MessageDb(QString mail, QString name, QString surname)
+{
+    QSqlQuery query;
+    if (!db.tables().contains("messages"))
+    {
+        if (!query.exec("CREATE TABLE messages ("
+                        "id serial primary key,"
+                        "mail varchar(50),"
+                        "name varchar(50),"
+                        "surname varchar(50),"
+                        "date_message Date,"
+                        "time_message Time);"))
+        {
+            qDebug() << "Ошибка при создании таблицы:" << query.lastError().text();
+            return 0;
+        }
+    }
+
+    QDate currentDate = QDate::currentDate();
+    QTime currentTime = QTime::currentTime();
+
+    QString formattedDate = currentDate.toString(Qt::ISODate);
+    QString formattedTime = currentTime.toString(Qt::ISODate);
+
+    QString queryStr = QString("INSERT INTO messages (mail, name, surname, date_message, time_message) VALUES"
+                               "('%1', '%2', '%3', '%4', '%5');")
+                           .arg(mail)
+                           .arg(name)
+                           .arg(surname)
+                           .arg(formattedDate)
+                           .arg(formattedTime);
+
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "Error add: " << query.lastError().text();
+        return 0;
+    }
+
+    return 1;
+
 }
 
 QJsonArray db_connection::get_data_of_clients()

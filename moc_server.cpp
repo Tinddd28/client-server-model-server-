@@ -43,17 +43,19 @@ constexpr auto qt_meta_stringdata_CLASSServerENDCLASS = QtMocHelpers::stringData
     "",
     "qintptr",
     "socketDescriptor",
-    "slotReadyRead"
+    "slotReadyRead",
+    "QTcpSocket*"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSServerENDCLASS_t {
-    uint offsetsAndSizes[12];
+    uint offsetsAndSizes[14];
     char stringdata0[7];
     char stringdata1[19];
     char stringdata2[1];
     char stringdata3[8];
     char stringdata4[17];
     char stringdata5[14];
+    char stringdata6[12];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSServerENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -64,14 +66,16 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSServerENDCLASS_t qt_meta_string
         QT_MOC_LITERAL(26, 0),  // ""
         QT_MOC_LITERAL(27, 7),  // "qintptr"
         QT_MOC_LITERAL(35, 16),  // "socketDescriptor"
-        QT_MOC_LITERAL(52, 13)   // "slotReadyRead"
+        QT_MOC_LITERAL(52, 13),  // "slotReadyRead"
+        QT_MOC_LITERAL(66, 11)   // "QTcpSocket*"
     },
     "Server",
     "incomingConnection",
     "",
     "qintptr",
     "socketDescriptor",
-    "slotReadyRead"
+    "slotReadyRead",
+    "QTcpSocket*"
 };
 #undef QT_MOC_LITERAL
 #endif // !QT_MOC_HAS_STRING_DATA
@@ -92,11 +96,11 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSServerENDCLASS[] = {
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
        1,    1,   26,    2, 0x0a,    1 /* Public */,
-       5,    0,   29,    2, 0x0a,    3 /* Public */,
+       5,    2,   29,    2, 0x0a,    3 /* Public */,
 
  // slots: parameters
     QMetaType::Void, 0x80000000 | 3,    4,
-    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 6, QMetaType::QByteArray,    2,    2,
 
        0        // eod
 };
@@ -114,7 +118,9 @@ Q_CONSTINIT const QMetaObject Server::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<qintptr, std::false_type>,
         // method 'slotReadyRead'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QTcpSocket *, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QByteArray &, std::false_type>
     >,
     nullptr
 } };
@@ -126,8 +132,19 @@ void Server::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void
         (void)_t;
         switch (_id) {
         case 0: _t->incomingConnection((*reinterpret_cast< std::add_pointer_t<qintptr>>(_a[1]))); break;
-        case 1: _t->slotReadyRead(); break;
+        case 1: _t->slotReadyRead((*reinterpret_cast< std::add_pointer_t<QTcpSocket*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QByteArray>>(_a[2]))); break;
         default: ;
+        }
+    } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        switch (_id) {
+        default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
+        case 1:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
+            case 0:
+                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< QTcpSocket* >(); break;
+            }
+            break;
         }
     }
 }
@@ -156,7 +173,7 @@ int Server::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         _id -= 2;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         if (_id < 2)
-            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+            qt_static_metacall(this, _c, _id, _a);
         _id -= 2;
     }
     return _id;

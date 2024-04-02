@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDate>
+#include <QTime>
 
 
 class db_connection
@@ -32,6 +33,7 @@ public:
     QJsonArray get_data_of_clients();
     // void add_client(QString name, QString mail, QString number);
     bool ChangeInDb(QString, int);
+    bool MessageDb(QString, QString, QString);
 
 
 
