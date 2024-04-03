@@ -7,6 +7,8 @@
 #include <QString>
 #include <QDataStream>
 #include <QMap>
+#include <QProcess>
+#include <QVariantList>
 
 #include <db_connection.h>
 
@@ -16,25 +18,79 @@ class Server : public QTcpServer
 
 public:
     Server();
-    QTcpSocket *socket;
-
 
 private:
     QVector<QTcpSocket*> sockets;
-    QByteArray Data;
-    void SendToClient(QString str);
-    quint16 nextBlockSize;
-    QVector<QTcpSocket*> Sockets;
 
+    struct ForMes
+    {
+        QString mail;
+        QString name;
+        QString surname;
+        QString message;
+
+        // Метод сериализации структуры ForMes в QByteArray
+        QByteArray serialize() const
+        {
+            QByteArray byteArray;
+            QDataStream stream(&byteArray, QIODevice::WriteOnly);
+            stream << mail << name << surname << message;
+            return byteArray;
+        }
+
+        // Статический метод десериализации QByteArray в структуру ForMes
+        static ForMes deserialize(const QByteArray& byteArray)
+        {
+            ForMes fm;
+            QDataStream stream(byteArray);
+            stream >> fm.mail >> fm.name >> fm.surname >> fm.message;
+            return fm;
+        }
+    };
+
+    QVector<ForMes> deserializeVector(const QByteArray& byteArray)
+    {
+        QVector<ForMes> vector;
+        QDataStream stream(byteArray);
+
+        int size;
+        stream >> size; // Получаем размер вектора
+
+        // Десериализуем каждую структуру в векторе
+        for (int i = 0; i < size; ++i) {
+            ForMes item;
+            // Считываем данные каждой структуры из потока
+            stream >> item.mail >> item.name >> item.surname >> item.message;
+            vector.append(item);
+        }
+
+        return vector;
+    }
     db_connection db;
-    void SendItemsForClient(QString str);
-    //QString db_auth(QString uname, QByteArray pass);
+    int id_p = 1;
+    void SendItemsForClient(QTcpSocket*);
+    void SendListOfClients(QTcpSocket*, QString, QString, QString);
+    void SendInfoAboutOrder(QTcpSocket*);
+    void SendItemsForSale(QTcpSocket*);
+    void SendItemsAndClients(QTcpSocket*);
+    void SendClients(QTcpSocket*);
+
+    void SendItems(QTcpSocket*, QString window, QString action, QString data);
+    void SendOrders(QTcpSocket*);
+    void SendMessages(QTcpSocket*);
+    void SendSales(QTcpSocket*);
+    void SendProfit(QTcpSocket*);
+    void SendUsers(QTcpSocket*, QString);
+    QVector<QString> deseriale(QByteArray);
 
 
+    void select_role(QTcpSocket*, QString us_name, QString us_pass);
+    QMap<quintptr, QTcpSocket*> connections;
+    bool SendMail(QString, QString);
 
 public slots:
     void incomingConnection(qintptr socketDescriptor);
-    void slotReadyRead();
+    void slotReadyRead(QTcpSocket*, const QByteArray&);
 
 
 };

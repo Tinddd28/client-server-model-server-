@@ -724,6 +724,34 @@ moc_server.cpp: server.h \
 		../../6.6.2/gcc_64/include/QtCore/qlocale.h \
 		../../6.6.2/gcc_64/include/QtCore/QString \
 		../../6.6.2/gcc_64/include/QtCore/QDataStream \
+		../../6.6.2/gcc_64/include/QtCore/QMap \
+		db_connection.h \
+		../../6.6.2/gcc_64/include/QtSql/QSqlDatabase \
+		../../6.6.2/gcc_64/include/QtSql/qsqldatabase.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsqlglobal.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsql-config.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsqlexports.h \
+		../../6.6.2/gcc_64/include/QtCore/QDebug \
+		../../6.6.2/gcc_64/include/QtCore/QCryptographicHash \
+		../../6.6.2/gcc_64/include/QtCore/qcryptographichash.h \
+		../../6.6.2/gcc_64/include/QtSql/QSqlQuery \
+		../../6.6.2/gcc_64/include/QtSql/qsqlquery.h \
+		../../6.6.2/gcc_64/include/QtCore/QByteArray \
+		../../6.6.2/gcc_64/include/QtSql/QSqlError \
+		../../6.6.2/gcc_64/include/QtSql/qsqlerror.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonArray \
+		../../6.6.2/gcc_64/include/QtCore/qjsonarray.h \
+		../../6.6.2/gcc_64/include/QtCore/qjsonvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborcommon.h \
+		../../6.6.2/gcc_64/include/QtCore/qregularexpression.h \
+		../../6.6.2/gcc_64/include/QtCore/qurl.h \
+		../../6.6.2/gcc_64/include/QtCore/quuid.h \
+		../../6.6.2/gcc_64/include/QtCore/qendian.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonDocument \
+		../../6.6.2/gcc_64/include/QtCore/qjsondocument.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonObject \
+		../../6.6.2/gcc_64/include/QtCore/qjsonobject.h \
 		moc_predefs.h \
 		../../6.6.2/gcc_64/libexec/moc
 	/home/kali/Qt/6.6.2/gcc_64/libexec/moc $(DEFINES) --include /home/kali/Qt/projects/server/moc_predefs.h -I/home/kali/Qt/6.6.2/gcc_64/mkspecs/linux-clang -I/home/kali/Qt/projects/server -I/home/kali/Qt/6.6.2/gcc_64/include -I/home/kali/Qt/6.6.2/gcc_64/include/QtNetwork -I/home/kali/Qt/6.6.2/gcc_64/include/QtSql -I/home/kali/Qt/6.6.2/gcc_64/include/QtCore -I/usr/include/c++/13 -I/usr/include/x86_64-linux-gnu/c++/13 -I/usr/include/c++/13/backward -I/usr/lib/llvm-16/lib/clang/16/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include server.h -o moc_server.cpp
@@ -864,7 +892,23 @@ db_connection.o: db_connection.cpp db_connection.h \
 		../../6.6.2/gcc_64/include/QtCore/qbindingstorage.h \
 		../../6.6.2/gcc_64/include/QtCore/QByteArray \
 		../../6.6.2/gcc_64/include/QtSql/QSqlError \
-		../../6.6.2/gcc_64/include/QtSql/qsqlerror.h
+		../../6.6.2/gcc_64/include/QtSql/qsqlerror.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonArray \
+		../../6.6.2/gcc_64/include/QtCore/qjsonarray.h \
+		../../6.6.2/gcc_64/include/QtCore/qjsonvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qdatetime.h \
+		../../6.6.2/gcc_64/include/QtCore/qcalendar.h \
+		../../6.6.2/gcc_64/include/QtCore/qlocale.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborcommon.h \
+		../../6.6.2/gcc_64/include/QtCore/qregularexpression.h \
+		../../6.6.2/gcc_64/include/QtCore/qurl.h \
+		../../6.6.2/gcc_64/include/QtCore/quuid.h \
+		../../6.6.2/gcc_64/include/QtCore/qendian.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonDocument \
+		../../6.6.2/gcc_64/include/QtCore/qjsondocument.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonObject \
+		../../6.6.2/gcc_64/include/QtCore/qjsonobject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o db_connection.o db_connection.cpp
 
 main.o: main.cpp ../../6.6.2/gcc_64/include/QtCore/QCoreApplication \
@@ -1014,17 +1058,34 @@ main.o: main.cpp ../../6.6.2/gcc_64/include/QtCore/QCoreApplication \
 		../../6.6.2/gcc_64/include/QtCore/qlocale.h \
 		../../6.6.2/gcc_64/include/QtCore/QString \
 		../../6.6.2/gcc_64/include/QtCore/QDataStream \
+		../../6.6.2/gcc_64/include/QtCore/QMap \
+		db_connection.h \
+		../../6.6.2/gcc_64/include/QtSql/QSqlDatabase \
+		../../6.6.2/gcc_64/include/QtSql/qsqldatabase.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsqlglobal.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsql-config.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsqlexports.h \
+		../../6.6.2/gcc_64/include/QtCore/QDebug \
 		../../6.6.2/gcc_64/include/QtCore/QCryptographicHash \
 		../../6.6.2/gcc_64/include/QtCore/qcryptographichash.h \
 		../../6.6.2/gcc_64/include/QtSql/QSqlQuery \
 		../../6.6.2/gcc_64/include/QtSql/qsqlquery.h \
-		../../6.6.2/gcc_64/include/QtSql/qtsqlglobal.h \
-		../../6.6.2/gcc_64/include/QtSql/qtsql-config.h \
-		../../6.6.2/gcc_64/include/QtSql/qtsqlexports.h \
-		../../6.6.2/gcc_64/include/QtSql/qsqldatabase.h \
 		../../6.6.2/gcc_64/include/QtCore/QByteArray \
 		../../6.6.2/gcc_64/include/QtSql/QSqlError \
-		../../6.6.2/gcc_64/include/QtSql/qsqlerror.h
+		../../6.6.2/gcc_64/include/QtSql/qsqlerror.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonArray \
+		../../6.6.2/gcc_64/include/QtCore/qjsonarray.h \
+		../../6.6.2/gcc_64/include/QtCore/qjsonvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborcommon.h \
+		../../6.6.2/gcc_64/include/QtCore/qregularexpression.h \
+		../../6.6.2/gcc_64/include/QtCore/qurl.h \
+		../../6.6.2/gcc_64/include/QtCore/quuid.h \
+		../../6.6.2/gcc_64/include/QtCore/qendian.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonDocument \
+		../../6.6.2/gcc_64/include/QtCore/qjsondocument.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonObject \
+		../../6.6.2/gcc_64/include/QtCore/qjsonobject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 server.o: server.cpp server.h \
@@ -1154,7 +1215,35 @@ server.o: server.cpp server.h \
 		../../6.6.2/gcc_64/include/QtCore/qcalendar.h \
 		../../6.6.2/gcc_64/include/QtCore/qlocale.h \
 		../../6.6.2/gcc_64/include/QtCore/QString \
-		../../6.6.2/gcc_64/include/QtCore/QDataStream
+		../../6.6.2/gcc_64/include/QtCore/QDataStream \
+		../../6.6.2/gcc_64/include/QtCore/QMap \
+		db_connection.h \
+		../../6.6.2/gcc_64/include/QtSql/QSqlDatabase \
+		../../6.6.2/gcc_64/include/QtSql/qsqldatabase.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsqlglobal.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsql-config.h \
+		../../6.6.2/gcc_64/include/QtSql/qtsqlexports.h \
+		../../6.6.2/gcc_64/include/QtCore/QDebug \
+		../../6.6.2/gcc_64/include/QtCore/QCryptographicHash \
+		../../6.6.2/gcc_64/include/QtCore/qcryptographichash.h \
+		../../6.6.2/gcc_64/include/QtSql/QSqlQuery \
+		../../6.6.2/gcc_64/include/QtSql/qsqlquery.h \
+		../../6.6.2/gcc_64/include/QtCore/QByteArray \
+		../../6.6.2/gcc_64/include/QtSql/QSqlError \
+		../../6.6.2/gcc_64/include/QtSql/qsqlerror.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonArray \
+		../../6.6.2/gcc_64/include/QtCore/qjsonarray.h \
+		../../6.6.2/gcc_64/include/QtCore/qjsonvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborvalue.h \
+		../../6.6.2/gcc_64/include/QtCore/qcborcommon.h \
+		../../6.6.2/gcc_64/include/QtCore/qregularexpression.h \
+		../../6.6.2/gcc_64/include/QtCore/qurl.h \
+		../../6.6.2/gcc_64/include/QtCore/quuid.h \
+		../../6.6.2/gcc_64/include/QtCore/qendian.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonDocument \
+		../../6.6.2/gcc_64/include/QtCore/qjsondocument.h \
+		../../6.6.2/gcc_64/include/QtCore/QJsonObject \
+		../../6.6.2/gcc_64/include/QtCore/qjsonobject.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o server.o server.cpp
 
 moc_server.o: moc_server.cpp 

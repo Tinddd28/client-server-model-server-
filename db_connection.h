@@ -9,8 +9,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDate>
+#include <QTime>
 
-#include <db_connection.h>
 
 class db_connection
 {
@@ -25,10 +26,20 @@ public:
     db_connection();
     QSqlDatabase db;
     bool db_open();
-    QString get_data_for_auth(QString uname, QByteArray pass);
+    void db_close();
+    void editDbOfOrder(double pr, QString, QString, QString);
+    QString get_data_for_auth(QString uname, QString pass);
     QJsonArray get_data_of_items();
-    // void get_data_of_clients();
+    QJsonArray get_data_of_clients();
     // void add_client(QString name, QString mail, QString number);
+    bool ChangeInDb(QString, int);
+    bool MessageDb(QString, QString, QString);
+    QJsonArray getOrders();
+    QJsonArray getMessages();
+    void AddInDbUsers(QVector<QString>);
+    QJsonArray get_list_of_users();
+    void DelFromTable(QString);
+    void UpdateUsersTable(QString);
 
 
 
