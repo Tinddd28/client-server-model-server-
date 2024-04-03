@@ -19,10 +19,48 @@ void db_connection::db_close()
     db.close();
 }
 
+QJsonArray db_connection::get_list_of_users()
+{
+    QSqlQuery query;
+    if (!query.exec("SELECT * FROM auth;"))
+    {
+        qDebug() << "erorr: " << query.lastError().text();
+        return QJsonArray();
+    }
+
+    QJsonArray jsonArray;
+    while (query.next())
+    {
+        QJsonObject jsonObj;
+        jsonObj["login"] = query.value(1).toString();
+        jsonObj["password_hash"] = query.value(2).toString();
+        jsonObj["user_name"] = query.value(3).toString();
+        jsonObj["user_surname"] = query.value(4).toString();
+        jsonObj["dolzh"] = query.value(5).toString();
+        jsonObj["mail"] = query.value(6).toString();
+
+        jsonArray.append(jsonObj);
+    }
+    return jsonArray;
+}
+
+void db_connection::DelFromTable(QString data)
+{
+    QSqlQuery query;
+    QString queryStr = QString("Delete from auth where login = '%1';").arg(data);
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "error: " << query.lastError().text();
+        return;
+    }
+
+    qDebug() << "Successfully delete!";
+}
+
 QString db_connection::get_data_for_auth(QString uname, QString pass)
 {
     QSqlQuery query;
-    if (!query.exec("SELECT username, password_hash FROM users"))
+    if (!query.exec("SELECT login, password_hash FROM auth"))
     {
         qDebug() << "Ошибка выполнения запроса!";
         return "error";
@@ -184,7 +222,6 @@ void db_connection::editDbOfOrder(double price, QString name, QString surname, Q
                            .arg(surname)
                            .arg(price)  // price уже является числом, поэтому его можно передать напрямую
                            .arg(QDate::currentDate().toString(Qt::ISODate));
-    if (!query.exec(queryStr))
     {
         qDebug() << "error!";
         return;
@@ -213,10 +250,14 @@ bool db_connection::ChangeInDb(QString jsonString, int flag)
                 if (!query.exec("DELETE FROM items;"))
                 {
                     qDebug() << "Failed to clear table:";
-                    qDebug() << query.lastError().text();
+                    qDebug() << query.lastError().text();    {
+
+                    }
                     return 0;
                 }
-                QJsonArray jsonArray = jsonDoc.array();
+                QJsonArray jsonArray = jsonDoc.array();    {
+
+                }
                 for (const auto& jsonValue : jsonArray)
                 {
                     QJsonObject jsonObj = jsonValue.toObject();
@@ -246,7 +287,9 @@ bool db_connection::ChangeInDb(QString jsonString, int flag)
                 for (const auto& jsonValue : jsonArray)
                 {
                     QJsonObject jsonObj = jsonValue.toObject();
-                    QString name = jsonObj["name"].toString();
+                    QString name = jsonObj["name"].toString();    {
+
+                    }
                     QString surname = jsonObj["surname"].toString();
                     QString mail = jsonObj["mail"].toString();
                     QString phone = jsonObj["phone"].toString();
@@ -270,6 +313,112 @@ bool db_connection::ChangeInDb(QString jsonString, int flag)
     }
 }
 
+void db_connection::UpdateUsersTable(QString json)
+{
+    QSqlQuery query;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(json.toUtf8());
+    if (!query.exec("DELETE FROM auth;"))
+    {
+        qDebug() << "error: " << query.lastError().text();
+        return;
+    }
 
+    QJsonArray jsonArray = jsonDoc.array();
+    for (const auto& jsonValue : jsonArray)
+    {
+        QJsonObject jsonObj = jsonValue.toObject();
+        QString login = jsonObj.value("login").toString();
+        QString pass = jsonObj.value("password_hash").toString();
+        QString user_name = jsonObj.value("user_name").toString();
+        QString user_surname = jsonObj.value("user_surname").toString();
+        QString dolzh = jsonObj.value("dolzh").toString();
+        QString mail = jsonObj.value("mail").toString();
+        if (login == "mm")
+            qDebug() << pass;
+        QString queryStr = QString("INSERT INTO auth (login, password_hash, user_name, user_surname, dolzh, mail) VALUES"
+                               "('%1', '%2', '%3', '%4', '%5', '%6')").arg(login).arg(pass).arg(user_name).arg(user_surname)
+                           .arg(dolzh).arg(mail);
+
+        if (!query.exec(queryStr))
+        {
+            qDebug() << "error: " << query.lastError().text();
+            continue;
+        }
+
+        qDebug() << "add";
+    }
+
+}
+
+QJsonArray db_connection::getOrders()
+{
+    QSqlQuery query;
+    if (!query.exec("SELECT * FROM orders"))
+    {
+        qDebug() << "error: " << query.lastError().text();
+        return QJsonArray();
+    }
+
+    QJsonArray jsonArray;
+    while (query.next())
+    {
+        QJsonObject jsonObj;
+        jsonObj["item_name"] = query.value(1).toString();
+        jsonObj["person_name"] = query.value(2).toString();
+        jsonObj["person_surname"] = query.value(3).toString();
+        jsonObj["price"] = query.value(4).toDouble();
+        jsonObj["date_order"] = query.value(5).toString();
+        jsonArray.append(jsonObj);
+    }
+    return jsonArray;
+}
+
+QJsonArray db_connection::getMessages()
+{
+    QSqlQuery query;
+    if (!query.exec("SELECT * FROM messages"))
+    {
+        qDebug() << "error: " << query.lastError().text();
+        return QJsonArray();
+    }
+
+    QJsonArray jsonArray;
+    while (query.next())
+    {
+        QJsonObject jsonObj;
+        jsonObj["mail"] = query.value(1).toString();
+        jsonObj["name"] = query.value(2).toString();
+        jsonObj["surname"] = query.value(3).toString();
+        jsonObj["date"] = query.value(4).toString();
+        jsonObj["time"] = query.value(5).toString();
+
+        jsonArray.append(jsonObj);
+    }
+
+    return jsonArray;
+}
+
+void db_connection::AddInDbUsers(QVector<QString> vector)
+{
+    QSqlQuery query;
+    if (!db.tables().contains("auth"))
+    {
+        qDebug() << "error: " << query.lastError().text();
+        return;
+    }
+
+    QString queryStr = QString("INSERT INTO auth (login, password_hash, user_name, user_surname, dolzh, mail) VALUES"
+                               "('%1', '%2', '%3', '%4', '%5', '%6')").arg(vector[4]).arg(vector[5]).arg(vector[1]).arg(vector[2])
+                           .arg(vector[3]).arg(vector[0]);
+
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "error: " << query.lastError().text();
+        return;
+    }
+
+
+
+}
 
 

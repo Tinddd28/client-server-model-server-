@@ -69,11 +69,11 @@ void Server::slotReadyRead(QTcpSocket* socket, const QByteArray& request)
             QString data = jsonObj.value("data").toString();
             if (data == "items")
             {
-                SendItemsForClient(socket);
+                SendItems(socket, window, action, data);
             }
             else if (data == "clients")
             {
-                SendListOfClients(socket);
+                SendListOfClients(socket, window, action, data);
             }
             else if (data == "order")
             {
@@ -133,6 +133,159 @@ void Server::slotReadyRead(QTcpSocket* socket, const QByteArray& request)
             }
         }
     }
+    else if (window == "dataout")
+    {
+        QString action = jsonObj.value("action").toString();
+        if (action == "data")
+        {
+            QString data = jsonObj.value("data").toString();
+            if (data == "items")
+            {
+                SendItems(socket, window, action, data);
+            }
+            else if (data == "clients")
+            {
+                SendListOfClients(socket, window, action, data);
+            }
+            else if (data == "orders")
+            {
+                SendOrders(socket);
+            }
+            else if (data == "messages")
+            {
+                SendMessages(socket);
+            }
+            else if (data == "profit")
+            {
+                SendProfit(socket);
+            }
+            else if (data == "sales")
+            {
+                SendSales(socket);
+            }
+        }
+    }
+    else if (window == "director")
+    {
+        QString action = jsonObj.value("action").toString();
+        {
+            if (action == "add")
+            {
+                QString data = jsonObj.value("add").toString();
+                QByteArray d = QByteArray::fromBase64(data.toLatin1());
+                QVector<QString> vector = deseriale(d);
+                qDebug() << vector[0];
+                qDebug() << vector[5];
+                db.AddInDbUsers(vector);
+            }
+            else if (action == "edituser")
+            {
+                SendUsers(socket, action);
+            }
+            else if (action == "adduser")
+            {
+                SendUsers(socket, action);
+            }
+            else if (action == "deluser")
+            {
+                SendUsers(socket, action);
+            }
+            else if (action == "del")
+            {
+                QString data = jsonObj.value("user").toString();
+                qDebug() << data;
+                db.DelFromTable(data);
+            }
+            else if (action == "edit")
+            {
+                QString data = jsonObj.value("users").toString();
+                db.UpdateUsersTable(data);
+            }
+            else if (action == "view")
+            {
+                SendUsers(socket, action);
+            }
+        }
+    }
+}
+
+void Server::SendUsers(QTcpSocket *socket, QString action)
+{
+    QJsonDocument jsonData = QJsonDocument(db.get_list_of_users());
+    QString res = jsonData.toJson();
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "director");
+    jsonObj.insert("action", action);
+    jsonObj.insert("users", res);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
+
+QVector<QString> Server::deseriale(QByteArray byteArray)
+{
+    QVector<QString> vector;
+    QDataStream stream(byteArray);
+    QVariantList list;
+    stream >> list;
+
+    // Преобразование QVariantList обратно в QVector<QString>
+    for (const QVariant& variant : list) {
+        vector.append(variant.toString());
+    }
+    return vector;
+}
+
+void Server::SendOrders(QTcpSocket *socket)
+{
+    QJsonDocument jsonData = QJsonDocument(db.getOrders());
+    QString res = jsonData.toJson();
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "dataout");
+    jsonObj.insert("action", "data");
+    jsonObj.insert("data", "orders");
+    jsonObj.insert("orders", res);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
+
+void Server::SendMessages(QTcpSocket *socket)
+{
+    QJsonDocument jsonData = QJsonDocument(db.getMessages());
+    QString res = jsonData.toJson();
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "dataout");
+    jsonObj.insert("action", "data");
+    jsonObj.insert("data", "messages");
+    jsonObj.insert("messages", res);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
+
+void Server::SendSales(QTcpSocket *socket)
+{
+
+}
+
+void Server::SendProfit(QTcpSocket *socket)
+{
+
+}
+
+void Server::SendItems(QTcpSocket *socket, QString window, QString action, QString data)
+{
+    QJsonDocument jsonData = QJsonDocument(db.get_data_of_items());
+    QString res = jsonData.toJson();
+    QJsonObject jsonObj;
+    jsonObj.insert("window", window);
+    jsonObj.insert("action", action);
+    jsonObj.insert("data", data);
+    jsonObj.insert(data, res);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
 }
 
 bool Server::SendMail(QString mail, QString message)
@@ -215,16 +368,16 @@ void Server::SendItemsForClient(QTcpSocket *socket)
     socket->write(jsonDoc.toJson());
 }
 
-void Server::SendListOfClients(QTcpSocket* socket)
+void Server::SendListOfClients(QTcpSocket* socket, QString window, QString action, QString data)
 {
     QJsonDocument jsonData = QJsonDocument(db.get_data_of_clients());
     QString jsonString = jsonData.toJson();
 
     QJsonObject jsonObj;
-    jsonObj.insert("window", "salesmanager");
-    jsonObj.insert("action", "data");
-    jsonObj.insert("data", "clients");
-    jsonObj.insert("clients", jsonString);
+    jsonObj.insert("window", window);
+    jsonObj.insert("action", action);
+    jsonObj.insert("data", data);
+    jsonObj.insert(data, jsonString);
 
     QJsonDocument jsonDoc(jsonObj);
     socket->write(jsonDoc.toJson());

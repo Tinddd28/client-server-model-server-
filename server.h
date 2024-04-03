@@ -8,6 +8,7 @@
 #include <QDataStream>
 #include <QMap>
 #include <QProcess>
+#include <QVariantList>
 
 #include <db_connection.h>
 
@@ -68,11 +69,20 @@ private:
     db_connection db;
     int id_p = 1;
     void SendItemsForClient(QTcpSocket*);
-    void SendListOfClients(QTcpSocket*);
+    void SendListOfClients(QTcpSocket*, QString, QString, QString);
     void SendInfoAboutOrder(QTcpSocket*);
     void SendItemsForSale(QTcpSocket*);
     void SendItemsAndClients(QTcpSocket*);
     void SendClients(QTcpSocket*);
+
+    void SendItems(QTcpSocket*, QString window, QString action, QString data);
+    void SendOrders(QTcpSocket*);
+    void SendMessages(QTcpSocket*);
+    void SendSales(QTcpSocket*);
+    void SendProfit(QTcpSocket*);
+    void SendUsers(QTcpSocket*, QString);
+    QVector<QString> deseriale(QByteArray);
+
 
     void select_role(QTcpSocket*, QString us_name, QString us_pass);
     QMap<quintptr, QTcpSocket*> connections;

@@ -34,6 +34,12 @@ public:
     // void add_client(QString name, QString mail, QString number);
     bool ChangeInDb(QString, int);
     bool MessageDb(QString, QString, QString);
+    QJsonArray getOrders();
+    QJsonArray getMessages();
+    void AddInDbUsers(QVector<QString>);
+    QJsonArray get_list_of_users();
+    void DelFromTable(QString);
+    void UpdateUsersTable(QString);
 
 
 
