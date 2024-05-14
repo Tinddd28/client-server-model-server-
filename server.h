@@ -91,8 +91,6 @@ private:
 public slots:
     void incomingConnection(qintptr socketDescriptor);
     void slotReadyRead(QTcpSocket*, const QByteArray&);
-
-
 };
 
 #endif // SERVER_H

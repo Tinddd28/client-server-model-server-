@@ -9,6 +9,54 @@ db_connection::db_connection()
     db.setPassword("11111");
 }
 
+int db_connection::check_db_auth()
+{
+    QSqlQuery query;
+    if (!db.tables().contains("auth"))
+    {
+        QString qu = QString ("CREATE TABLE auth("
+                             "id SERIAL PRIMARY KEY,"
+                             "login varchar(50) NOT NULL,"
+                             "password_hash varchar(256) NOT NULL,"
+                             "user_name varchar(50) NOT NULL,"
+                             "user_surname varchar(50) NOT NULL,"
+                             "dolzh varchar(50) NOT NULL,"
+                             "mail varchar(50));");
+        if (!query.exec(qu))
+        {
+            qDebug() << "error create table!" << query.lastError().text();
+            return -1;
+        }
+        else qDebug() << "Таблица 'clients' успешно создана";
+    }
+
+    QString queryStr = QString("SELECT * FROM auth;");
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "error query exec! " << query.lastError().text();
+        return -1;
+    }
+
+    if (query.size() == 0)
+    {
+        QString password = "12345678";
+        QByteArray passwordData = password.toUtf8();
+        QByteArray passwordHash = QCryptographicHash::hash(passwordData, QCryptographicHash::Sha256).toHex();
+        password = passwordHash;
+        queryStr = QString("INSERT INTO auth(login, password_hash, user_name, user_surname, dolzh, mail) VALUES"
+                           "('%1', '%2', '%3', '%4', '%5', '%6');").arg("default").arg(password).arg("user").arg("default").arg("start_user")
+                       .arg("user");
+        if (!query.exec(queryStr))
+        {
+            qDebug() << "error insert into table! " << query.lastError().text();
+            return -1;
+        }
+        else qDebug() << "start user add success!";
+        return 1;
+    }
+    return 0;
+}
+
 bool db_connection::db_open()
 {
     return db.open();
@@ -416,9 +464,6 @@ void db_connection::AddInDbUsers(QVector<QString> vector)
         qDebug() << "error: " << query.lastError().text();
         return;
     }
-
-
-
 }
 
 

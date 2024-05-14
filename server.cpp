@@ -11,6 +11,12 @@ Server::Server()
         qDebug() << "connect to db";
     }
     else qDebug() << "error connect to db";
+    int f = db.check_db_auth();
+    if (f < 0)
+    {
+        this->close();
+    }
+    //Проверка существовани
 }
 
 void Server::incomingConnection(qintptr socketDescriptor)
@@ -170,7 +176,9 @@ void Server::slotReadyRead(QTcpSocket* socket, const QByteArray& request)
         QString action = jsonObj.value("action").toString();
         {
             if (action == "add")
-            {
+            {jsonObj.insert("window", "salesmanager");
+                jsonObj.insert("action", "data");
+                jsonObj.insert("data", "items");
                 QString data = jsonObj.value("add").toString();
                 QByteArray d = QByteArray::fromBase64(data.toLatin1());
                 QVector<QString> vector = deseriale(d);
@@ -291,7 +299,7 @@ void Server::SendItems(QTcpSocket *socket, QString window, QString action, QStri
 bool Server::SendMail(QString mail, QString message)
 {
     QStringList args;
-    args << "/home/kali/Qt/projects/send.py" << mail << message;
+    args << "send.py" << mail << message;
     QProcess process;
     process.start("python", args);
     process.waitForFinished();
@@ -343,6 +351,7 @@ void Server::select_role(QTcpSocket* socket, QString us_name, QString us_pass)
         id_p = 1;
     else if (res == "salesmanager") id_p = 2;
     else if (res == "marketingmanager") id_p = 3;
+    else if (res == "default") id_p = 1;
     else if (res == "No") status = "fail";
     QJsonObject jsonObj;
     jsonObj.insert("window", "mainwindow");

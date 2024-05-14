@@ -25,6 +25,7 @@ private:
 public:
     db_connection();
     QSqlDatabase db;
+    int check_db_auth();
     bool db_open();
     void db_close();
     void editDbOfOrder(double pr, QString, QString, QString);
