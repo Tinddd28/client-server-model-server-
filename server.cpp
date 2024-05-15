@@ -49,6 +49,27 @@ void Server::incomingConnection(qintptr socketDescriptor)
     connections.insert(socketDescriptor, socket);
 }
 
+void Server::sendResultOfRequestReset(QTcpSocket* socket, int flag)
+{
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "mainwindow");
+    jsonObj.insert("action", "reset");
+    jsonObj.insert("flag", flag);
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
+
+void Server::send_res_of_update(QTcpSocket* socket, int flag)
+{
+    QJsonObject jsonObj;
+    jsonObj.insert("window", "mainwindow");
+    jsonObj.insert("action", "result");
+    jsonObj.insert("result", flag);
+
+    QJsonDocument jsonDoc(jsonObj);
+    socket->write(jsonDoc.toJson());
+}
+
 void Server::slotReadyRead(QTcpSocket* socket, const QByteArray& request)
 {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(request);
@@ -65,6 +86,23 @@ void Server::slotReadyRead(QTcpSocket* socket, const QByteArray& request)
             QString us_name = data.value("us_name").toString();
             QString us_pass = data.value("us_pass").toString();
             select_role(socket, us_name, us_pass);
+        }
+        else if (action == "reset")
+        {
+            QJsonObject data = jsonObj.value("data").toObject();
+            QString us_name = data.value("name").toString();
+            QString us_sname = data.value("sname").toString();
+            QString login = data.value("login").toString();
+            QString mail = data.value("mail").toString();
+            int flag = db.reset_data(us_name, us_sname, login, mail);
+            sendResultOfRequestReset(socket, flag);
+        }
+        else if (action == "change")
+        {
+            QJsonObject data = jsonObj.value("data").toObject();
+            int flag = db.change_pass(data);
+            send_res_of_update(socket, flag);
+
         }
     }
     else if (window == "salesmanager")

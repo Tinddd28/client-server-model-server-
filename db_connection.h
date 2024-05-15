@@ -42,6 +42,11 @@ public:
     void DelFromTable(QString);
     void UpdateUsersTable(QString);
 
+    int change_pass(QJsonObject);
+
+
+
+    int reset_data(QString name, QString sname, QString login, QString mail);
 
 
 };

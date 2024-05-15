@@ -67,6 +67,30 @@ void db_connection::db_close()
     db.close();
 }
 
+int db_connection::reset_data(QString name, QString sname, QString login, QString mail)
+{
+    QSqlQuery query;
+    QString queryStr = QString("SELECT * FROM auth;");
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "error query exec! " << query.lastError().text();
+        return -1;
+    }
+
+    while (query.next())
+    {
+        if (query.value(1).toString() == login && \
+            query.value(4).toString() == sname && \
+            query.value(3).toString() == name && \
+            query.value(6).toString() == mail)
+        {
+            return 1;//all great!
+        }
+    }
+
+    return 0;
+}
+
 QJsonArray db_connection::get_list_of_users()
 {
     QSqlQuery query;
@@ -396,6 +420,27 @@ void db_connection::UpdateUsersTable(QString json)
         qDebug() << "add";
     }
 
+}
+
+int db_connection::change_pass(QJsonObject data)
+{
+    QString pass = data.value("pass").toString();
+    QString name = data.value("name").toString();
+    QString sname = data.value("sname").toString();
+    QString login = data.value("login").toString();
+    QString mail = data.value("mail").toString();
+
+    QSqlQuery query;
+    QString queryStr = QString("UPDATE auth SET password_hash = '%1' WHERE user_name = '%2' AND\
+                user_surname = '%3' AND login = '%4' AND mail = '%5';")\
+                           .arg(pass).arg(name).arg(sname).arg(login).arg(mail);
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "error update pass " << query.lastError().text();
+        return 0;
+    }
+
+    return 1;
 }
 
 QJsonArray db_connection::getOrders()

@@ -88,6 +88,9 @@ private:
     QMap<quintptr, QTcpSocket*> connections;
     bool SendMail(QString, QString);
 
+    void sendResultOfRequestReset(QTcpSocket*, int flag);
+    void send_res_of_update(QTcpSocket*, int flag);
+
 public slots:
     void incomingConnection(qintptr socketDescriptor);
     void slotReadyRead(QTcpSocket*, const QByteArray&);
